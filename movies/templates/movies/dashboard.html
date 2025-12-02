@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'movies/css/style.css' %}">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📊 Welcome, {{ user.username }}!</h1>
+        <a href="{% url 'home' %}" class="btn">🏠 Home</a>
+        <a href="{% url 'logout' %}" class="btn">🚪 Logout</a>
+    </div>
+
+    <!-- TOTAL MOVIES STAT -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ total_movies }}</div>
+            <div>Total Movies</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user_favorites_count }}</div>
+            <div>Your Favorites</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ user_comments_count }}</div>
+            <div>Comments</div>
+        </div>
+    </div>
+
+    <!-- RECENT MOVIES GRID -->
+    <h2 style="color: white; text-align: center;">Recent Movies</h2>
+    <div class="movie-grid">
+        {% for movie in favorites %}
+        <div class="movie-card">
+            {% if movie.poster %}
+                <img src="{{ movie.poster.url }}" class="poster">
+            {% else %}
+                <div class="poster-placeholder">📺</div>
+            {% endif %}
+            <div class="movie-info">
+                <h2 class="movie-title">{{ movie.title }}</h2>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: white;">
+            <h3>No movies yet! Add some in <a href="/admin/">Admin</a></h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

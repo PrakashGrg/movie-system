@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Movie Recommendations</title>
+    <link rel="stylesheet" href="{% static 'movies/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 Movie Recommendations</h1>
+            <p>Love yourself</p>
+            <div class="btn-grid">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="btn">📊 Dashboard</a>
+                    <a href="{% url 'logout' %}" class="btn">🚪 Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn">🔐 Login</a>
+                    <a href="{% url 'register' %}" class="btn">📝 Register</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="movie-grid">
+            {% for movie in movies %}
+            <div class="movie-card">
+                {% if movie.poster %}
+                    <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="poster">
+                {% else %}
+                    <div class="poster-placeholder">📺</div>
+                {% endif %}
+                <div class="movie-info">
+                    <h2 class="movie-title">{{ movie.title }}</h2>
+                    <p class="movie-desc">{{ movie.description|truncatewords:25 }}</p>
+                    
+                    <!-- 🔥 WORKING LIKE BUTTON -->
+                    {% if user.is_authenticated %}
+                        {% if movie.is_favorite > 0 %}
+                            <a href="{% url 'toggle_favorite' movie.id %}" class="btn">
+                                ❤️ Unlike ({{ movie.favorites_count|default:0 }})
+                            </a>
+                        {% else %}
+                            <a href="{% url 'toggle_favorite' movie.id %}" class="btn">
+                                ⭐ Like ({{ movie.favorites_count|default:0 }})
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn">
+                            ⭐ Like ({{ movie.favorites_count|default:0 }})
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: white;">
+                <h2>No movies yet. <a href="/admin/" class="btn">Add some in Admin!</a></h2>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
